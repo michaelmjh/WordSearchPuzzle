@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace WordSearchPuzzle
+namespace WordSearchAllDirections
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string[] dictionaryArray = { "hi", "hello", "afhkp", "hgj" };
+            string[] dictionaryArray = { "hi", "hello", "afhkp" };
             char[,] grid = new char[5, 5] {
                 { 'a', 'b', 'c', 'd', 'e' },
                 { 'f', 'g', 'h', 'i', 'j' },
@@ -14,73 +14,63 @@ namespace WordSearchPuzzle
                 { 'k', 'l', 'm', 'n', 'o' },
                 { 'p', 'q', 'r', 's', 't' }
             };
-            bool wordFound = false;
 
             for (int arrayPosition = 0; arrayPosition < dictionaryArray.Length; arrayPosition++)
             {
-                // Split word into array of char
+                // Split word from dictionary into array of char
+
+
                 char[] charsToSearchFor = dictionaryArray[arrayPosition].ToCharArray();
 
-                // Search for first letter
-                for (int r = 0; r < 5; r++)
+
+                for (int row = 0; row < 5; row++)
                 {
-                    for (int c = 0; c < 5; c++)
+                    for (int column = 0; column < 5; column++)
                     {
-                        if (grid[r, c] == charsToSearchFor[0])
+
+                        string foundWord = FindLetter(grid, charsToSearchFor, row, column, 0, "");
+
+                        if (foundWord == dictionaryArray[arrayPosition])
                         {
-                            wordFound = false;
+                            Console.WriteLine($"Word found: {dictionaryArray[arrayPosition]}");
 
-                            // Search for subsequent letter horizontally
-                            wordFound = searchForLettersHorizontal(grid, charsToSearchFor, r, c);
-
-                            if (wordFound)
-                            {
-                                printWordFound("Horizontal", dictionaryArray[arrayPosition]);
-                            }
-
-                            // Search for subsequent letter horizontally
-                            wordFound = searchForLettersVertical(grid, charsToSearchFor, r, c);
-
-                            if (wordFound)
-                            {
-                                printWordFound("Vertical", dictionaryArray[arrayPosition]);
-                            }
                         }
                     }
                 }
             }
         }
 
-        private static void printWordFound(string horizontalOrVertical, string word)
+        public static string FindLetter(char[,] grid, char[] charsToSearchFor, int r, int c, int letterCount, string wordBuild)
         {
-            
-            Console.WriteLine($"{horizontalOrVertical} word found: {word}");
-            Console.WriteLine();
-        }
+            string word = wordBuild;
 
-        private static bool searchForLettersHorizontal(char[,] grid, char[] charsToSearchFor, int r, int c)
-        {
-            for (int horizontalSearch = 1; horizontalSearch < charsToSearchFor.Length; horizontalSearch++)
-            {
-                if (grid[r, c + horizontalSearch] != charsToSearchFor[horizontalSearch])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
-        private static bool searchForLettersVertical(char[,] grid, char[] charsToSearchFor, int r, int c)
-        {
-            for (int verticalSearch = 1; verticalSearch < charsToSearchFor.Length; verticalSearch++)
+
+
+
+            if (letterCount >= charsToSearchFor.Length)
             {
-                if (grid[r + verticalSearch, c] != charsToSearchFor[verticalSearch])
-                {
-                    return false;
-                }
+                word = "out of bounds";
             }
-            return true;
+
+            else if (r < 0 || r >= grid.GetLength(0) || c < 0 || c >= grid.GetLength(1))
+            {
+                word = "out of bounds";
+            }
+
+            if (grid[r, c] != charsToSearchFor[letterCount])
+            {
+                word = "letter not found";
+            }
+            else
+            {
+                wordBuild += grid[r, c];
+                FindLetter(grid, charsToSearchFor, r, c + 1, 0, "");
+            }
+
+
+            Console.WriteLine(word);
+            return word;
         }
     }
 }
-
