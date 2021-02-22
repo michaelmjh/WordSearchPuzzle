@@ -44,10 +44,6 @@ namespace WordSearchAllDirections
         {
             string word = wordBuild;
 
-
-
-
-
             if (letterCount >= charsToSearchFor.Length)
             {
                 word = "out of bounds";
@@ -64,10 +60,9 @@ namespace WordSearchAllDirections
             }
             else
             {
-                wordBuild += grid[r, c];
-                FindLetter(grid, charsToSearchFor, r, c + 1, 0, "");
+                word += grid[r, c];
+                FindLetter(grid, charsToSearchFor, r, c + 1, 0, word);
             }
-
 
             Console.WriteLine(word);
             return word;
