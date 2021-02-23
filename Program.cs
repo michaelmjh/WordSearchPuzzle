@@ -6,66 +6,91 @@ namespace WordSearchAllDirections
     {
         static void Main(string[] args)
         {
-            string[] dictionaryArray = { "hi", "hello", "afhkp" };
+            string[] dictionaryArray = { "hi", "hello", "afhkp", "test", "tool", "tell" };
             char[,] grid = new char[5, 5] {
                 { 'a', 'b', 'c', 'd', 'e' },
-                { 'f', 'g', 'h', 'i', 'j' },
+                { 'f', 'l', 'h', 'i', 'l' },
                 { 'h', 'e', 'l', 'l', 'o' },
-                { 'k', 'l', 'm', 'n', 'o' },
-                { 'p', 'q', 'r', 's', 't' }
+                { 'k', 'l', 'm', 'e', 'o' },
+                { 'p', 't', 's', 'e', 't' }
             };
 
-            for (int arrayPosition = 0; arrayPosition < dictionaryArray.Length; arrayPosition++)
+            //make into for each
+            foreach (string word in dictionaryArray)
             {
-                // Split word from dictionary into array of char
-
-
-                char[] charsToSearchFor = dictionaryArray[arrayPosition].ToCharArray();
-
-
                 for (int row = 0; row < 5; row++)
                 {
                     for (int column = 0; column < 5; column++)
                     {
-
-                        string foundWord = FindLetter(grid, charsToSearchFor, row, column, 0, "");
-
-                        if (foundWord == dictionaryArray[arrayPosition])
+                        for (int searchDirection = 0; searchDirection < 8; searchDirection++)
                         {
-                            Console.WriteLine($"Word found: {dictionaryArray[arrayPosition]}");
-
+                            FindWord(grid, row, column, word, 0, searchDirection);
                         }
                     }
                 }
             }
         }
 
-        public static string FindLetter(char[,] grid, char[] charsToSearchFor, int r, int c, int letterCount, string wordBuild)
+        public static void FindWord(char[,] grid,  int r, int c, string wordToSearchFor, int letterCount, int searchDirection)
         {
-            string word = wordBuild;
-
-            if (letterCount >= charsToSearchFor.Length)
+            // Check letter being search for is with the bounds of the word and return if not
+            if (letterCount >= wordToSearchFor.Length)
             {
-                word = "out of bounds";
+                return;
             }
-
+            // Check letter being compared is within bounds of the grid and return if not
             else if (r < 0 || r >= grid.GetLength(0) || c < 0 || c >= grid.GetLength(1))
             {
-                word = "out of bounds";
+                return;
             }
-
-            if (grid[r, c] != charsToSearchFor[letterCount])
+            // Return if grid letter does not match letter being searched for
+            if (grid[r, c] != wordToSearchFor[letterCount])
             {
-                word = "letter not found";
+                return;
             }
             else
             {
-                word += grid[r, c];
-                FindLetter(grid, charsToSearchFor, r, c + 1, 0, word);
+                // If letter found is last in the word, print word and return
+                if (letterCount == (wordToSearchFor.Length - 1))
+                {
+                    Console.WriteLine($"Word found - {wordToSearchFor}");
+                    return;
+                }
+                // else continue searching for next letter
+                else
+                {
+                    switch (searchDirection)
+                    {
+                        case 0:
+                            FindWord(grid, r, c + 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 1:
+                            FindWord(grid, r + 1, c + 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 2:
+                            FindWord(grid, r + 1, c, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 3:
+                            FindWord(grid, r + 1, c - 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 4:
+                            FindWord(grid, r, c - 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 5:
+                            FindWord(grid, r - 1, c - 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 6:
+                            FindWord(grid, r - 1, c, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        case 7:
+                            FindWord(grid, r - 1, c + 1, wordToSearchFor, letterCount + 1, searchDirection);
+                            break;
+                        default:
+                            Console.WriteLine("Default case");
+                            break;
+                    }
+                }
             }
-
-            Console.WriteLine(word);
-            return word;
         }
     }
 }
